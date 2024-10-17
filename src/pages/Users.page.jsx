@@ -1,4 +1,6 @@
 import React, {useEffect, useState} from 'react';
+import Accordion from "../components/Accordion.jsx";
+import './Users.css'
 
 
 //https://jsonplaceholder.typicode.com/users
@@ -31,6 +33,9 @@ const UsersPage = () => {
 
     const handleFetchTodo = async (userId) => {
         if (!userId) return
+        const userAlreadyHasTodos = users.find(user => user.id === userId)?.todos
+        // no need to fetch todos if it's already fetched
+        if (userAlreadyHasTodos?.length > 0) return
         const todoData = await fetchTodosByUser(userId)
         const usersDataWithTodo = users.map(user => {
             if (user.id === userId) {
@@ -45,37 +50,60 @@ const UsersPage = () => {
         setUsers(usersDataWithTodo)
     }
 
+    const updateTodo = ({todoId, userId}) => {
+        const updatedUsers = users.map(user => {
+            if (user.id === userId) {
+                user.todos.map(todo => {
+                    if (todo.id === todoId) {
+                        todo.completed = !todo.completed
+                    }
+                    return todo
+                })
+            }
+            return user
+        })
+
+        setUsers(updatedUsers)
+    }
+
+
 
     return (
-        <div>
+        <div className="container">
             <h2>Users</h2>
-            {Array.isArray(users) ? (
-                users.map(user => {
-                    return (
-                        <ul key={user.id}>
-                           <li>
-                               <div>
-                                   <span>{user?.id}</span>
-                                   <span>{user?.username}</span>
-                                   <span>{user?.email}</span>
-                               </div>
-                               <div onClick={() =>  handleFetchTodo(user?.id)}>
-                                   <div>{
-                                       user?.todos?.map(todo => {
-                                           return (
-                                               <div>
-                                                   <input type="checkbox" checked={todo?.completed}/>
-                                                   <span>{todo?.title}</span>
-                                               </div>
-                                           )
-                                       })
-                                   }</div>
-                               </div>
-                           </li>
-                        </ul>
-                    )
-                })
-            ) : null}
+            <ul>
+                {Array.isArray(users) ? (
+                    users.map(user => {
+                        return (
+                            <li key={user.id}>
+                                <Accordion
+                                    title={
+                                        <div>
+                                            <span className="userId">{user?.id}</span>
+                                            <span className="username">{user?.username}</span>
+                                            <span>{user?.email}</span>
+                                        </div>
+                                    }
+                                    body={
+                                        <div>{
+                                            user?.todos?.map(todo => {
+                                                return (
+                                                    <div className="todoContainer">
+                                                        <input className="checkbox" type="checkbox"
+                                                               checked={todo?.completed} onChange={() => updateTodo({todoId: todo.id, userId: user.id})}/>
+                                                        <div className="todoTitle">{todo?.title}</div>
+                                                    </div>
+                                                )
+                                            })
+                                        }</div>
+                                    }
+                                    handleTitleClick={() => handleFetchTodo(user?.id)}
+                                />
+                            </li>
+                        )
+                    })
+                ) : null}
+            </ul>
         </div>
     );
 };

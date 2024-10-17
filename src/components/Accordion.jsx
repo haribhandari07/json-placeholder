@@ -1,16 +1,22 @@
 import React, {useState} from 'react';
+import './Accordion.css'
 
-const Accordion = ({title, body, handleTitleCick}) => {
+const Accordion = ({title, body, handleTitleClick}) => {
     const [open, setIsOpen] = useState(false)
 
     const toggleAccordion = () => {
         setIsOpen(!open)
-        handleTitleCick()
+        handleTitleClick()
     }
 
     return (
         <div>
-            <div onClick={toggleAccordion}>{title}</div>
+            <div onClick={toggleAccordion} className="accordionTitle">
+                <div>
+                    {title}
+                </div>
+                <span>+</span>
+            </div>
             {open && (
                 body
             )}

@@ -1,0 +1,18 @@
+.accordionTitle {
+    cursor: pointer;
+    color: #6060fd;
+    display: flex;
+}
+
+.todoContainer {
+    display: flex;
+}
+
+.checkbox {
+    display: inline-block;
+    padding-right: 10px;
+}
+
+.todoTitle {
+    padding-left: 10px;
+}
